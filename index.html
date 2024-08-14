@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Ambika</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header, footer {
+            background-color: #333;
+            color: #fff;
+            padding: 1em;
+            text-align: center;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5em 1em;
+        }
+        main {
+            padding: 2em;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 2em;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label, input, button, select {
+            margin-bottom: 1em;
+        }
+        button {
+            padding: 0.5em;
+            border: none;
+            background-color: #a86e47;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #a86e47;
+        }
+        img.hidden {
+            display: none;
+        }
+        .orders, .admin-actions, .placed-orders, .completed-orders {
+            margin-top: 2em;
+        }
+        .order-item {
+            border-bottom: 1px solid #ddd;
+            padding: 1em 0;
+        }
+        .welcome-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .welcome-image {
+            max-width: 40%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        .welcome-container h1 {
+            font-size: 2.5em;
+            margin-bottom: 1em;
+        }
+        .welcome-container button {
+            padding: 0.75em 1.5em;
+            font-size: 1.2em;
+        }
+        .login-images {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5em;
+        }
+        .login-image {
+            width: 20%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Hotel Ambika</h1>
+        <nav>
+            <a href="#" id="login-link">Login</a>
+            <a href="#" id="admin-link">Admin Panel</a>
+        </nav>
+    </header>
+    <main>
+        <div id="main-content" class="container">
+
+            <!-- Welcome Page -->
+            <div id="welcome-page" class="welcome-container">
+                <img src="https://i.ibb.co/HxKWcgb/Whats-App-Image-2024-08-13-at-10-58-47-PM-1.jpg" alt="Whats-App-Image-2024-08-13-at-10-58-47-PM-1" alt="Hotel Ambika" class="welcome-image">
+                <h1>WELCOME TO HOTEL AMBIKA</h1>
+                <h3>Andarsul, Tal:-Yeola, Dist:-Nashik (423402)</h3>
+                <button onclick="goToLoginPage()">Get Started</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="login-form" class="container" style="display: none;">
+                <div class="login-images">
+                    <img src="https://www.pngkey.com/png/detail/251-2510994_savithri-catering-has-been-established-for-over-10.png" alt="Hotel Ambika" class="login-image">
+                    <h1>Login Page</h1>
+                    <img src="https://restro.smarttechsoft.in/wp-content/uploads/2022/09/veg-thali-1.png" alt="Hotel Ambika" class="login-image">
+                </div>
+                <form onsubmit="handleLogin(event)">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                    <label for="role">Role:</label>
+                    <select id="role">
+                        <option value="customer">Customer</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+
+            <!-- Customer Ordering -->
+            <div id="customer-page" class="container" style="display: none;">
+                <h2>Order Food</h2>
+                <button onclick="showCustomerDetails()">Customer Details</button>
+                <div id="menu"></div>
+                <div id="cart"></div>
+                <div id="order-form" style="display: none;">
+                    <h3>Place Order</h3>
+                    <form onsubmit="handleOrder(event)">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" required>
+                        <label for="address">Address:</label>
+                        <input type="text" id="address" required>
+                        <label for="mobile">Mobile:</label>
+                        <input type="text" id="mobile" required>
+                        <button type="submit">Place Order</button>
+                    </form>
+                </div>
+                <div id="placed-orders" class="placed-orders" style="display: none;">
+                    <h3>Placed Orders</h3>
+                    <div id="placed-orders-list"></div>
+                    <button onclick="clearPlacedOrders()">Clear Placed Orders</button>
+                </div>
+            </div>
+
+            <!-- Customer Details Section -->
+            <div id="customer-details" class="container" style="display: none;">
+                <h2>Customer Details</h2>
+                <button onclick="backToShopping()">Back to Shopping</button>
+                <form onsubmit="handleSaveDetails(event)">
+                    <label for="customer-email">Email:</label>
+                    <input type="email" id="customer-email" readonly>
+                    <label for="customer-name">Name:</label>
+                    <input type="text" id="customer-name" required>
+                    <label for="customer-mobile">Mobile:</label>
+                    <input type="text" id="customer-mobile" required>
+                    <label for="photo-upload">Upload Photo:</label>
+                    <input type="file" id="photo-upload" accept="image/*" onchange="previewImage(event)">
+                    <img id="photo-preview" class="hidden" style="width: 150px; height: auto;">
+                    <button type="submit">Save</button>
+                    <button type="button" onclick="handleUpdateDetails()">Update</button>
+                </form>
+            </div>
+
+            <!-- Admin Panel -->
+            <div id="admin-panel" class="container" style="display: none;">
+                <h2>Admin Panel</h2>
+                <div class="admin-actions">
+                    <h3>Add New Item</h3>
+                    <form onsubmit="handleAddItem(event)">
+                        <label for="item-name">Item Name:</label>
+                        <input type="text" id="item-name" required>
+                        <label for="item-price">Price:</label>
+                        <input type="number" id="item-price" required>
+                        <button type="submit">Add Item</button>
+                    </form>
+                </div>
+                <div class="orders">
+                    <h3>Orders</h3>
+                    <div id="orders-list"></div>
+                </div>
+                <div class="completed-orders" style="margin-top: 2em;">
+                    <h3>Completed Orders</h3>
+                    <div id="completed-orders-list"></div>
+                    <button onclick="clearCompletedOrders()">Clear Completed Orders</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Food Order Website</p>
+    </footer>
+    <script>
+        // Retrieve data from localStorage
+        const getFromLocalStorage = (key) => JSON.parse(localStorage.getItem(key)) || [];
+        const saveToLocalStorage = (key, data) => localStorage.setItem(key, JSON.stringify(data));
+
+        // Initialize data
+        let menuItems = getFromLocalStorage('menuItems');
+        let orders = getFromLocalStorage('orders');
+        let completedOrders = getFromLocalStorage('completedOrders');
+        let cart = getFromLocalStorage('cart');
+        let customerDetails = getFromLocalStorage('customerDetails') || {};
+
+        // Simulate data if not available
+        if (menuItems.length === 0) {
+            menuItems = [
+                { name: 'Pizza', price: 10 },
+                { name: 'Burger', price: 5 },
+                { name: 'Pasta', price: 8 },
+                { name: 'Salad', price: 6 },
+                { name: 'Soup', price: 4 },
+                { name: 'Sandwich', price: 7 },
+                { name: 'Steak', price: 15 },
+                { name: 'Sushi', price: 12 }
+            ];
+            saveToLocalStorage('menuItems', menuItems);
+        }
+
+        function goToLoginPage() {
+            document.getElementById('welcome-page').style.display = 'none';
+            document.getElementById('login-form').style.display = 'block';
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const role = document.getElementById('role').value;
+
+            if (role === 'customer') {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('customer-page').style.display = 'block';
+                renderMenu();
+                loadCustomerDetails(email);
+            } else if (role === 'admin') {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                renderOrders();
+                renderCompletedOrders();
+            }
+        }
+
+        function renderMenu() {
+            const menuDiv = document.getElementById('menu');
+            menuDiv.innerHTML = '<h3>Menu</h3>';
+            menuItems.forEach((item, index) => {
+                const menuItem = document.createElement('div');
+                menuItem.className = 'menu-item';
+                menuItem.innerHTML = `
+                    <p>${item.name} - $${item.price}</p>
+                    <button onclick="addToCart(${index})">Add to Cart</button>
+                `;
+                menuDiv.appendChild(menuItem);
+            });
+
+            if (cart.length > 0) {
+                renderCart();
+            }
+        }
+
+        function addToCart(index) {
+            const item = menuItems[index];
+            cart.push(item);
+            saveToLocalStorage('cart', cart);
+            renderCart();
+        }
+
+        function renderCart() {
+            const cartDiv = document.getElementById('cart');
+            cartDiv.innerHTML = '<h3>Your Cart</h3>';
+            cart.forEach((item, index) => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <p>${item.name} - $${item.price}</p>
+                    <button onclick="removeFromCart(${index})">Remove</button>
+                `;
+                cartDiv.appendChild(cartItem);
+            });
+
+            if (cart.length > 0) {
+                document.getElementById('order-form').style.display = 'block';
+            } else {
+                document.getElementById('order-form').style.display = 'none';
+            }
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            saveToLocalStorage('cart', cart);
+            renderCart();
+        }
+
+        function handleOrder(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const address = document.getElementById('address').value;
+            const mobile = document.getElementById('mobile').value;
+            const order = {
+                name,
+                address,
+                mobile,
+                items: cart
+            };
+
+            orders.push(order);
+            saveToLocalStorage('orders', orders);
+            cart = [];
+            saveToLocalStorage('cart', cart);
+            renderCart();
+            renderPlacedOrders();
+        }
+
+        function renderPlacedOrders() {
+            const placedOrdersDiv = document.getElementById('placed-orders-list');
+            placedOrdersDiv.innerHTML = '';
+            orders.forEach((order, index) => {
+                const orderItem = document.createElement('div');
+                orderItem.className = 'order-item';
+                orderItem.innerHTML = `
+                    <p><strong>Customer:</strong> ${order.name}</p>
+                    <p><strong>Address:</strong> ${order.address}</p>
+                    <p><strong>Mobile:</strong> ${order.mobile}</p>
+                    <p><strong>Items:</strong> ${order.items.map(item => item.name).join(', ')}</p>
+                `;
+                placedOrdersDiv.appendChild(orderItem);
+            });
+
+            if (orders.length > 0) {
+                document.getElementById('placed-orders').style.display = 'block';
+            } else {
+                document.getElementById('placed-orders').style.display = 'none';
+            }
+        }
+
+        function clearPlacedOrders() {
+            orders = [];
+            saveToLocalStorage('orders', orders);
+            renderPlacedOrders();
+        }
+
+        function renderOrders() {
+            const ordersDiv = document.getElementById('orders-list');
+            ordersDiv.innerHTML = '';
+            orders.forEach((order, index) => {
+                const orderItem = document.createElement('div');
+                orderItem.className = 'order-item';
+                orderItem.innerHTML = `
+                    <p><strong>Customer:</strong> ${order.name}</p>
+                    <p><strong>Address:</strong> ${order.address}</p>
+                    <p><strong>Mobile:</strong> ${order.mobile}</p>
+                    <p><strong>Items:</strong> ${order.items.map(item => item.name).join(', ')}</p>
+                    <button onclick="completeOrder(${index})">Complete</button>
+                `;
+                ordersDiv.appendChild(orderItem);
+            });
+        }
+
+        function completeOrder(index) {
+            const completedOrder = orders.splice(index, 1)[0];
+            completedOrders.push(completedOrder);
+            saveToLocalStorage('orders', orders);
+            saveToLocalStorage('completedOrders', completedOrders);
+            renderOrders();
+            renderCompletedOrders();
+        }
+
+        function renderCompletedOrders() {
+            const completedOrdersDiv = document.getElementById('completed-orders-list');
+            completedOrdersDiv.innerHTML = '';
+            completedOrders.forEach(order => {
+                const completedOrderItem = document.createElement('div');
+                completedOrderItem.className = 'order-item';
+                completedOrderItem.innerHTML = `
+                    <p><strong>Customer:</strong> ${order.name}</p>
+                    <p><strong>Address:</strong> ${order.address}</p>
+                    <p><strong>Mobile:</strong> ${order.mobile}</p>
+                    <p><strong>Items:</strong> ${order.items.map(item => item.name).join(', ')}</p>
+                `;
+                completedOrdersDiv.appendChild(completedOrderItem);
+            });
+
+            if (completedOrders.length > 0) {
+                document.querySelector('.completed-orders').style.display = 'block';
+            } else {
+                document.querySelector('.completed-orders').style.display = 'none';
+            }
+        }
+
+        function clearCompletedOrders() {
+            completedOrders = [];
+            saveToLocalStorage('completedOrders', completedOrders);
+            renderCompletedOrders();
+        }
+
+        function handleAddItem(event) {
+            event.preventDefault();
+            const itemName = document.getElementById('item-name').value;
+            const itemPrice = document.getElementById('item-price').value;
+            const newItem = { name: itemName, price: parseFloat(itemPrice) };
+            menuItems.push(newItem);
+            saveToLocalStorage('menuItems', menuItems);
+            renderMenu();
+        }
+
+        function showCustomerDetails() {
+            document.getElementById('customer-page').style.display = 'none';
+            document.getElementById('customer-details').style.display = 'block';
+        }
+
+        function backToShopping() {
+            document.getElementById('customer-details').style.display = 'none';
+            document.getElementById('customer-page').style.display = 'block';
+        }
+
+        function loadCustomerDetails(email) {
+            customerDetails = getFromLocalStorage('customerDetails');
+            document.getElementById('customer-email').value = email;
+            document.getElementById('customer-name').value = customerDetails.name || '';
+            document.getElementById('customer-mobile').value = customerDetails.mobile || '';
+            if (customerDetails.photo) {
+                const photoPreview = document.getElementById('photo-preview');
+                photoPreview.src = customerDetails.photo;
+                photoPreview.classList.remove('hidden');
+            }
+            renderPlacedOrders();
+        }
+
+        function handleSaveDetails(event) {
+            event.preventDefault();
+            customerDetails = {
+                email: document.getElementById('customer-email').value,
+                name: document.getElementById('customer-name').value,
+                mobile: document.getElementById('customer-mobile').value,
+                photo: document.getElementById('photo-preview').src
+            };
+            saveToLocalStorage('customerDetails', customerDetails);
+        }
+
+        function handleUpdateDetails() {
+            const name = document.getElementById('customer-name').value;
+            const mobile = document.getElementById('customer-mobile').value;
+            const photo = document.getElementById('photo-preview').src;
+
+            customerDetails.name = name;
+            customerDetails.mobile = mobile;
+            customerDetails.photo = photo;
+
+            saveToLocalStorage('customerDetails', customerDetails);
+        }
+
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const photoPreview = document.getElementById('photo-preview');
+                photoPreview.src = reader.result;
+                photoPreview.classList.remove('hidden');
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        // Initialize the app by rendering the menu if the user is a customer or orders if admin
+        window.onload = function() {
+            if (document.getElementById('customer-page').style.display === 'block') {
+                renderMenu();
+            } else if (document.getElementById('admin-panel').style.display === 'block') {
+                renderOrders();
+                renderCompletedOrders();
+            }
+        }
+    </script>
+</body>
+</html>
